@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link rel="stylesheet" href="css/framework7.material.colors.min.css">
+    <link rel="stylesheet" href="css/framework7.material.min.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <title></title>
+    <style>
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            background: #f0f0f0;
+            overflow-x: hidden;
+            overflow-y: auto
+        }
+
+        #app {
+            padding: 15px;
+        }
+
+        .list_li {
+            /* padding: 10px; */
+            border-radius: 6px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0px 0px 25px -8px #333;
+            margin-bottom: 15px;
+        }
+
+        .head {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .head_png {
+            width: 100%;
+        }
+
+        .posted {
+            font-size: 14px;
+            color: #8f8f94;
+            padding: 10px 10px 5px;
+            font-weight: 100;
+        }
+
+        .txt {
+            word-break: break-all;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            /** 对象作为伸缩盒子模型显示 **/
+            -webkit-box-orient: vertical;
+            /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+            -webkit-line-clamp: 1;
+            /** 显示的行数 **/
+            overflow: hidden;
+            /** 隐藏超出的内容 */
+            margin: 5px 10px 10px;
+            font-size: 14px;
+            height: 20px;
+            color: #333;
+        }
+
+        .bottom {
+            width: 100%;
+            /* height: 30px; */
+            border-top: 1px solid #d7d7d7;
+            padding: 10px 15px
+        }
+
+        .bottom>span {
+            color: #007aff
+        }
+
+        .right {
+            float: right;
+        }
+
+        #app .button_add {
+            min-width: 0;
+            width: 56px;
+            text-align: center;
+            line-height: 56px;
+            height: 56px;
+            border-radius: 28px;
+            font-size: 24px;
+            padding: 0;
+            margin: 0;
+            box-shadow: 0 0 10px -2px #333;
+            position: fixed;
+            right: 20px;
+            bottom: 40px
+        }
+
+        .back {
+            background: rgba(0, 0, 0, 0.3);
+            width: 100%;
+            min-height: 100%;
+            position: fixed;
+            left: 0;
+            top: 0
+        }
+
+        .back_box {
+            width: 75%;
+            height: 200px;
+            background: #fff;
+            margin: 40% auto 0;
+            border-radius: 10px;
+            display: flex;
+            overflow: hidden;
+            flex-direction: column
+        }
+
+        .title {
+            font-size: 16px;
+            width: 100%;
+            flex-grow: 1;
+            text-align: center;
+            line-height: 155px
+        }
+
+        .button_box {
+            height: 60px;
+            line-height: 60px
+        }
+
+        .button_box a {
+            height: 45px;
+            line-height: 50px;
+        }
+
+        .delete {
+            color: #333
+        }
+
+        .button {
+            border-radius: 0%
+        }
+        .dis{
+            display:none
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        <ul class="list">
+            <li class="list_li" v-for="(i,k) in json" :class="[{animated : !items[k].del},{bounceOutRight : !items[k].del},{dis : !items[k].dis}]">
+                <div class="head">
+                    <img :src="[i.attributes.img[0]]" alt="" class="head_png">
+                </div>
+                <h4 class="posted">
+                    Posted on
+                    <span class="date">{{month[i.createdAt.getMonth()]}} {{i.createdAt.getDate()}},{{i.createdAt.getFullYear()}}</span>
+                </h4>
+                <p class="txt">
+                    {{i.attributes.json.content}}
+                </p>
+                <div class="bottom">
+                    <span :id="[i.id]" @click="del(i.id,k);change =! change" class="del left">Delete</span>
+                    <span class="more right">Read more</span>
+                </div>
+            </li>
+        </ul>
+        <a href="#" class="button_add button button-fill color-blue">+</a>
+        <div class="back" v-show="change">
+            <div class="back_box">
+                <h4 class="title">确定是否删除</h4>
+                <div class="button_box row no-gutter">
+                    <a href="" @click="sure()" class="col-50 delete button button-fill color-blue">删除</a>
+                    <a href="" @click="change =! change" class="col-50 cancel button button-fill color-red">取消</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="js/framework7.min.js"></script>
+<script src="js/mui.min.js"></script>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+<script src="js/av-min.js"></script>
+<script type="text/javascript">
+    /*
+     * @Author: wangyu 
+     * @Date: 2018-04-24 14:44:26 
+ * @Last Modified by: wangyu
+ * @Last Modified time: 2018-04-25 14:55:01
+     */
+
+    var APP_ID = 'FkqqYvsF0LriKkSIJb7E3ljX-gzGzoHsz';
+    var APP_KEY = 'ExgNcL3fCzi75uv5R4yJxVnM';
+    AV.init({
+        appId: APP_ID,
+        appKey: APP_KEY,
+        region: 'CN'
+    });
+    mui.init();
+    var Myapp = new Framework7({
+        material: true
+    })
+
+    const app = new Vue({
+        el: '#app',
+        data: {
+            json: {},
+            month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+            change: false,
+            memo_id: "",
+            out: false,
+            items: [],
+            index_: 0,
+        },
+        created() {
+            let this_ = this;
+            var query = new AV.Query('TodoFolder');
+            query.descending('createdAt');
+            query.find().then(function (todo) {
+                this_.json = todo;
+                for (var i in todo) {
+                    this_.items.push({ del: true,dis:true });
+                    console.log(this_.items[0])
+                }
+            }, function (error) {
+                // 异常处理
+            });
+        },
+        methods: {
+            del(id, k) {
+                this.memo_id = id;
+                this.index_ = k;
+            },
+            sure() {
+                let this_ = this;
+                var todo = AV.Object.createWithoutData('TodoFolder', this.memo_id);
+                todo.destroy().then(function (success) {
+                    // 删除成功
+                    this_.change = false;
+                    this_.items[this_.index_].del = false;
+                    setTimeout(function () {  
+                        this_.items[this_.index_].dis = false;
+                    },1000)
+                    console.log(this_.items[this_.index_].del)
+                }, function (error) {
+                    // 删除失败
+                });
+            }
+        }
+
+    })
+
+
+
+</script>
+
+</html>

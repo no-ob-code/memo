@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"
+    />
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/framework7.material.colors.min.css">
+    <link rel="stylesheet" href="../css/framework7.material.min.css">
+
+    <style>
+        html,
+        body {
+            min-height: 100%;
+            background: #f0f0f0
+        }
+
+        #app {
+            padding: 10px;
+        }
+
+        .input_box {
+            background: #fff;
+            padding: 8px;
+            overflow: hidden;
+            /* height: 24px; */
+            /* line-height: 24px; */
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 0 5px -2px #333
+        }
+
+        .title {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .title_txt {
+            border: 0;
+            background: #f0f0f0;
+            height: 24px;
+            max-width: 50%;
+            float: right;
+            padding: 3px;
+            text-align: center;
+        }
+
+        .mar {
+            margin-bottom: 15px;
+        }
+
+        #content {
+            width: 96%;
+            resize: none;
+            border: 0;
+            background: #f0f0f0;
+            margin-left: 2%;
+            padding: 5px
+        }
+
+        p {
+            margin-top: 0;
+        }
+
+        .button {
+            width: 80%;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 5px;
+            margin: 0 auto;
+            margin-top: 50px
+        }
+
+        .img_file {
+            display: none
+        }
+
+        .album div>img {
+            width: 100%
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="input_box mar">
+            <span class="title">Title :</span>
+            <input type="text" v-model='json.title' class="title_txt">
+        </div>
+        <div class="input_box mar">
+            <p class="title">Content :</p>
+            <textarea name="content" v-model='json.content' id="content" cols="30" rows="10">
+            </textarea>
+        </div>
+        <div class="input_box">
+            <p class="title">Album :</p>
+            <!-- <label for="file" class="album row">
+                <img v-bind:src="{arr[0] ? arr[0] : '../img/img.png'}" class="col-25"> 
+                <img src="[arr]" class="col-25">
+                <img src="../img/img.png" class="col-25">
+                <img src="../img/img.png" class="col-25">
+                <img src="../img/img.png" class="col-25">
+            </label> -->
+            <label for="file" class="album row">
+                <div class="col-25" v-for="i in arr">
+                    <img :src="[i]" class="file_img">
+                </div>
+                <img src="../img/add.png" class="col-25">
+            </label>
+            <input type="file" id="file" class="img_file" v-on:change="upload($event)">
+        </div>
+        <div @click="sure()" class="button button-fill color-blue">Sure</div>
+    </div>
+
+
+</body>
+<script src="../js/framework7.min.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+<script src="../js/av-min.js"></script>
+<script>
+    /*
+ * @Author: wangyu 
+ * @Date: 2018-04-24 15:51:22 
+ * @Last Modified by: wangyu
+ * @Last Modified time: 2018-04-24 18:46:11
+ */
+    var APP_ID = 'FkqqYvsF0LriKkSIJb7E3ljX-gzGzoHsz';
+    var APP_KEY = 'ExgNcL3fCzi75uv5R4yJxVnM';
+    AV.init({
+        appId: APP_ID,
+        appKey: APP_KEY,
+        region: 'CN'
+    });
+    mui.init();
+    var Myapp = new Framework7({
+        material: true
+    });
+
+    const app = new Vue({
+        el: "#app",
+        data: {
+            title: "",
+            content: "",
+            json: {},
+            arr: [],
+            url: [],
+            num: 0,
+        },
+        methods: {
+            sure() {
+      
+                if(this.json.title == undefined){
+                    alert("标题不能为空 ！");
+                    return
+                }
+                if(this.json.content == undefined){
+                    alert("内容不能为空 ！");
+                    return
+                }
+                if(this.arr.length == 0){
+                    alert("图片不能为空 ！");
+                    return
+                }
+                // 声明类型
+                var TodoFolder = AV.Object.extend('TodoFolder');
+                // 新建对象
+                var todoFolder = new TodoFolder();
+                // 设置名称
+                todoFolder.set('json', this.json);
+                todoFolder.set('img', this.arr);
+                // 设置优先级
+                todoFolder.set('priority', 1);
+                todoFolder.save().then(function (todo) {
+                    alert("添加成功")
+                }, function (error) {
+                    console.error(error);
+                });
+            },
+            upload(e) {
+                let arr_ = this.arr;
+                let url_ = this.url;
+                let num_ = this.num;
+                if (arr_.length >= 4) {
+                    alert("最多上传4张 !");
+                    return
+                }
+                var reader = new FileReader();
+                reader.onload = function (file) {
+                    url_.push(this.result);
+
+                };
+                reader.readAsDataURL(e.target.files[0]);
+                var fileUploadControl = e.target;
+                if (fileUploadControl.files.length > 0) {
+                    var localFile = fileUploadControl.files[0];
+                    var name = '1.jpg';
+                    var file = new AV.File(name, localFile);
+                    file.save({
+                        onprogress: function (e) {
+                            num_ = e.percent
+                            console.log(num_);
+                        },
+                    }).then(function (file) {
+                        // let url_ = file.url()
+                        arr_.push(file.url());
+                        console.log(arr_)
+                    }, function (error) {
+                        // 异常处理
+                        console.error(error);
+                    });
+                }
+            },
+
+        }
+    })
+
+</script>
+
+</html>
