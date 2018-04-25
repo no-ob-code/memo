@@ -72,12 +72,31 @@
             margin-top: 50px
         }
 
+        .add {
+            width: 80px;
+            height: 80px;
+        }
+
         .img_file {
             display: none
         }
 
         .album div>img {
-            width: 100%
+            width: 100%;
+            position: relative;
+        }
+        .album div>span {
+            display: block;
+            text-align: center;
+            float: right;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background: red;
+            color: #fff;
+            z-index: 100;
+            position: relative;
+            top: 20px
         }
     </style>
 </head>
@@ -95,18 +114,16 @@
         </div>
         <div class="input_box">
             <p class="title">Album :</p>
-            <!-- <label for="file" class="album row">
-                <img v-bind:src="{arr[0] ? arr[0] : '../img/img.png'}" class="col-25"> 
-                <img src="[arr]" class="col-25">
-                <img src="../img/img.png" class="col-25">
-                <img src="../img/img.png" class="col-25">
-                <img src="../img/img.png" class="col-25">
-            </label> -->
-            <label for="file" class="album row">
-                <div class="col-25" v-for="i in arr">
-                    <img :src="[i]" class="file_img">
+            <div class="row album">
+                <div class="col-25" v-for="(i,k) in arr">
+                        <span @click="del(k);dd[k] =! dd[k]">X</span>
+                    <img :src="[i]" class="file_img" :class="{dis : !dd[k]}">
+                    
                 </div>
-                <img src="../img/add.png" class="col-25">
+
+            </div>
+            <label for="file">
+                <img src="../img/add.png" class="add">
             </label>
             <input type="file" id="file" class="img_file" v-on:change="upload($event)">
         </div>
@@ -147,19 +164,23 @@
             arr: [],
             url: [],
             num: 0,
+            dd: []
         },
         methods: {
+            del(k) {
+                this.arr.splice(k, 1)
+            },
             sure() {
-      
-                if(this.json.title == undefined){
+
+                if (this.json.title == undefined) {
                     alert("标题不能为空 ！");
                     return
                 }
-                if(this.json.content == undefined){
+                if (this.json.content == undefined) {
                     alert("内容不能为空 ！");
                     return
                 }
-                if(this.arr.length == 0){
+                if (this.arr.length == 0) {
                     alert("图片不能为空 ！");
                     return
                 }
@@ -182,6 +203,7 @@
                 let arr_ = this.arr;
                 let url_ = this.url;
                 let num_ = this.num;
+                let dd_ = this.dd
                 if (arr_.length >= 4) {
                     alert("最多上传4张 !");
                     return
@@ -200,11 +222,13 @@
                     file.save({
                         onprogress: function (e) {
                             num_ = e.percent
-                            console.log(num_);
+
                         },
                     }).then(function (file) {
                         // let url_ = file.url()
                         arr_.push(file.url());
+                        dd_.push(true);
+                        console.log(dd_);
                         console.log(arr_)
                     }, function (error) {
                         // 异常处理
