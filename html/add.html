@@ -14,7 +14,9 @@
         html,
         body {
             min-height: 100%;
-            background: #f0f0f0
+            background: #f0f0f0;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         #app {
@@ -166,6 +168,9 @@
             num: 0,
             dd: []
         },
+        created(){
+           
+        },
         methods: {
             del(k) {
                 this.arr.splice(k, 1)
@@ -194,7 +199,8 @@
                 // 设置优先级
                 todoFolder.set('priority', 1);
                 todoFolder.save().then(function (todo) {
-                    alert("添加成功")
+                    alert("添加成功");
+                    window.location.href = "../index.html"
                 }, function (error) {
                     console.error(error);
                 });

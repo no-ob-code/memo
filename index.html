@@ -173,17 +173,17 @@
                 </p>
                 <div class="bottom">
                     <span :id="[i.id]" @click="del(i.id,k);change =! change" class="del left">Delete</span>
-                    <span class="more right">Read more</span>
+                    <span @click="content(i.id)" class="more right">Read More</span>
                 </div>
             </li>
         </ul>
-        <a href="#" class="button_add button button-fill color-blue">+</a>
+        <a href="#" @click="jump()" class="button_add button button-fill color-blue">+</a>
         <div class="back" v-show="change">
             <div class="back_box">
                 <h4 class="title">确定是否删除</h4>
                 <div class="button_box row no-gutter">
-                    <a href="" @click="sure()" class="col-50 delete button button-fill color-blue">删除</a>
-                    <a href="" @click="change =! change" class="col-50 cancel button button-fill color-red">取消</a>
+                    <a href="#" @click="sure()" class="col-50 delete button button-fill color-blue">删除</a>
+                    <a href="#" @click="change =! change" class="col-50 cancel button button-fill color-red">取消</a>
 
                 </div>
             </div>
@@ -259,6 +259,12 @@
                 }, function (error) {
                     // 删除失败
                 });
+            },
+            jump(){
+                window.location.href = "html/add.html"
+            },
+            content(id){
+                window.location.href = `html/content.html?${id}`
             }
         }
 
