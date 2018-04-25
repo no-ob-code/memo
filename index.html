@@ -34,8 +34,10 @@
 
         .head {
             width: 100%;
-            height: 200px;
+            max-height: 200px;
             overflow: hidden;
+            transition: all .5s;
+            transition-timing-function: ease-out;
         }
 
         .head_png {
@@ -145,6 +147,11 @@
         .dis{
             display:none
         }
+        .list_li .auto{
+           max-height: 9999px;
+           transition: all .5s;
+           transition-timing-function: ease-out;
+        }
 
     </style>
 </head>
@@ -154,7 +161,7 @@
     <div id="app">
         <ul class="list">
             <li class="list_li" v-for="(i,k) in json" :class="[{animated : !items[k].del},{bounceOutRight : !items[k].del},{dis : !items[k].dis}]">
-                <div class="head">
+                <div class="head" @click="items[k].auto = !items[k].auto" :class="{auto : !items[k].auto}" >
                     <img :src="[i.attributes.img[0]]" alt="" class="head_png">
                 </div>
                 <h4 class="posted">
@@ -226,7 +233,7 @@
             query.find().then(function (todo) {
                 this_.json = todo;
                 for (var i in todo) {
-                    this_.items.push({ del: true,dis:true });
+                    this_.items.push({del: true,dis:true,auto:true});
                     console.log(this_.items[0])
                 }
             }, function (error) {
