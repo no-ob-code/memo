@@ -169,7 +169,7 @@
                     <span class="date">{{month[i.createdAt.getMonth()]}} {{i.createdAt.getDate()}},{{i.createdAt.getFullYear()}}</span>
                 </h4>
                 <p class="txt">
-                    {{i.attributes.json.content}}
+                    {{i.attributes.json.title}}
                 </p>
                 <div class="bottom">
                     <span :id="[i.id]" @click="del(i.id,k);change =! change" class="del left">Delete</span>
